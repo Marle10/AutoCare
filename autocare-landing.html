@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoCare — Diagnostica, conecta y repara</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   TOKENS — misma identidad de AutoCare
+══════════════════════════════════════════ */
+:root {
+  --red-dark:   #8b1a1a;
+  --red-mid:    #a02020;
+  --red-deep:   #3a0808;
+  --charcoal:   #3a3535;
+  --charcoal-d: #2a2525;
+  --gray-light: #c8c4be;
+  --gray-mid:   #9a9390;
+  --bg:         #f5f4f2;
+  --surface:    #ffffff;
+  --surface2:   #f0edea;
+  --surface3:   #e5e0db;
+  --border:     #d4cdc6;
+  --text:       #1a1614;
+  --text-muted: #5a5250;
+  --text-dim:   #9a9390;
+  --green:      #166534;
+  --green-bg:   #f0fdf4;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden}
+h1,h2,h3,h4,.brand{font-family:'Syne',sans-serif}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer}
+img,svg{display:block}
+::selection{background:rgba(139,26,26,0.18)}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+@media (max-width:680px){.wrap{padding:0 20px}}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(245,244,242,0.88);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{display:flex;align-items:center;gap:14px;padding:14px 32px}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-icon{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(145deg,#7a1212,#3a0808);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 10px rgba(139,26,26,0.35);
+}
+.logo-text{font-size:1.05rem;font-weight:800;letter-spacing:-0.02em;color:var(--charcoal)}
+.logo-text span{color:var(--red-dark)}
+.nav-links{display:flex;gap:28px;margin-left:44px}
+.nav-links a{font-size:0.86rem;font-weight:500;color:var(--text-muted);transition:color .15s}
+.nav-links a:hover{color:var(--red-dark)}
+.nav-cta{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{
+  padding:9px 18px;border-radius:9px;font-size:0.84rem;font-weight:600;
+  border:none;transition:all .18s;white-space:nowrap;
+}
+.btn-ghost{background:transparent;color:var(--charcoal);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface2);border-color:var(--gray-mid)}
+.btn-primary{background:var(--red-dark);color:white}
+.btn-primary:hover{background:#7a1515;box-shadow:0 5px 20px rgba(139,26,26,0.3);transform:translateY(-1px)}
+.btn-charcoal{background:var(--charcoal);color:white}
+.btn-charcoal:hover{background:var(--charcoal-d);transform:translateY(-1px)}
+@media (max-width:880px){.nav-links{display:none}}
+
+/* ══════ HERO ══════ */
+.hero{padding:92px 0 64px;position:relative}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:100px;
+  background:var(--surface2);border:1px solid var(--border);
+  font-size:0.78rem;font-weight:600;color:var(--red-dark);margin-bottom:28px;
+}
+.hero-tag-dot{width:6px;height:6px;border-radius:50%;background:#16a34a}
+.hero h1{
+  font-size:clamp(2.4rem,5.2vw,4.1rem);font-weight:800;letter-spacing:-0.035em;
+  line-height:1.04;max-width:880px;color:var(--charcoal);
+}
+.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--red-dark),#c04040);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:1.12rem;color:var(--text-muted);max-width:560px;margin-top:24px;line-height:1.6}
+.hero-ctas{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap}
+.hero-ctas .btn{padding:14px 26px;font-size:0.95rem;border-radius:11px}
+.hero-stats{display:flex;gap:40px;margin-top:64px;flex-wrap:wrap}
+.hero-stat-val{font-size:1.9rem;font-weight:800;color:var(--red-dark);letter-spacing:-0.02em}
+.hero-stat-lab{font-size:0.78rem;color:var(--text-dim);margin-top:2px}
+
+/* ══════ SPLIT PATHS ══════ */
+.paths{padding:48px 0 96px}
+.paths-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:880px){.paths-grid{grid-template-columns:1fr}}
+
+.path-card{
+  border-radius:24px;padding:40px 36px;position:relative;overflow:hidden;
+  transition:transform .25s ease;
+}
+.path-card:hover{transform:translateY(-4px)}
+
+.path-card.user{
+  background:var(--surface);border:1px solid var(--border);
+}
+.path-card.shop{
+  background:linear-gradient(160deg,var(--charcoal-d),#1f1b1b);
+  color:white;
+}
+
+.path-icon{
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:24px;
+}
+.path-card.user .path-icon{background:rgba(139,26,26,0.08);border:1px solid rgba(139,26,26,0.18)}
+.path-card.shop .path-icon{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14)}
+
+.path-card h2{font-size:1.6rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:10px}
+.path-card.shop h2{color:white}
+.path-card p.path-desc{font-size:0.95rem;color:var(--text-muted);margin-bottom:24px;line-height:1.6}
+.path-card.shop p.path-desc{color:rgba(255,255,255,0.62)}
+
+.path-list{display:flex;flex-direction:column;gap:11px;margin-bottom:28px}
+.path-list-item{display:flex;align-items:center;gap:10px;font-size:0.87rem}
+.path-check{
+  width:18px;height:18px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:10px;
+}
+.path-card.user .path-check{background:rgba(22,163,74,0.12);color:#16a34a}
+.path-card.shop .path-check{background:rgba(255,255,255,0.1);color:#fff}
+
+.path-price-tag{
+  display:inline-flex;align-items:baseline;gap:6px;margin-bottom:24px;
+}
+.path-price-tag .amount{font-size:2.2rem;font-weight:800;letter-spacing:-0.02em}
+.path-card.shop .path-price-tag .amount{color:#fff}
+.path-price-tag .period{font-size:0.85rem;color:var(--text-dim)}
+.path-card.shop .path-price-tag .period{color:rgba(255,255,255,0.5)}
+
+.path-card .btn{width:100%;padding:14px;font-size:0.95rem;border-radius:12px;justify-content:center;display:flex;align-items:center;gap:8px}
+
+/* ══════ PLANES (talleres) ══════ */
+.plans-section{padding:96px 0;background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.section-head{text-align:center;max-width:620px;margin:0 auto 56px}
+.section-eyebrow{font-size:0.78rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--red-dark);margin-bottom:14px}
+.section-head h2{font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:800;letter-spacing:-0.025em;color:var(--charcoal)}
+.section-head p{font-size:1.02rem;color:var(--text-muted);margin-top:14px;line-height:1.6}
+
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media (max-width:920px){.plans-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}}
+
+.plan-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:34px 30px;display:flex;flex-direction:column;position:relative;
+  transition:all .2s;
+}
+.plan-card:hover{box-shadow:0 12px 40px rgba(0,0,0,0.07);transform:translateY(-3px)}
+.plan-card.featured{
+  background:linear-gradient(165deg,var(--charcoal-d),#221d1d);
+  border-color:var(--charcoal-d);color:white;
+  transform:scale(1.04);
+}
+.plan-card.featured:hover{transform:scale(1.04) translateY(-3px)}
+
+.plan-badge{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:var(--red-dark);color:white;font-size:0.7rem;font-weight:700;
+  padding:5px 16px;border-radius:100px;letter-spacing:0.03em;
+  box-shadow:0 4px 12px rgba(139,26,26,0.35);
+}
+
+.plan-name{font-size:1.05rem;font-weight:700;color:var(--text-dim);margin-bottom:6px}
+.plan-card.featured .plan-name{color:rgba(255,255,255,0.55)}
+.plan-card-title{font-size:1.35rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:18px;color:var(--charcoal)}
+.plan-card.featured .plan-card-title{color:white}
+
+.plan-price{display:flex;align-items:baseline;gap:6px;margin-bottom:6px}
+.plan-price .currency{font-size:1.1rem;font-weight:700;color:var(--text-muted)}
+.plan-card.featured .plan-price .currency{color:rgba(255,255,255,0.6)}
+.plan-price .num{font-size:2.6rem;font-weight:800;letter-spacing:-0.03em;color:var(--charcoal)}
+.plan-card.featured .plan-price .num{color:white}
+.plan-price .per{font-size:0.85rem;color:var(--text-dim)}
+.plan-card.featured .plan-price .per{color:rgba(255,255,255,0.45)}
+.plan-tagline{font-size:0.83rem;color:var(--text-muted);margin-bottom:26px;line-height:1.55}
+.plan-card.featured .plan-tagline{color:rgba(255,255,255,0.62)}
+
+.plan-features{display:flex;flex-direction:column;gap:13px;margin-bottom:30px;flex:1}
+.plan-feature{display:flex;align-items:flex-start;gap:10px;font-size:0.85rem;line-height:1.5}
+.plan-feature .ck{
+  width:17px;height:17px;border-radius:50%;flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;
+}
+.plan-card:not(.featured) .ck{background:rgba(22,163,74,0.1);color:#16a34a}
+.plan-card.featured .ck{background:rgba(255,255,255,0.12);color:white}
+.plan-card.featured .plan-feature{color:rgba(255,255,255,0.85)}
+
+.plan-cta{
+  width:100%;padding:13px;border-radius:11px;font-size:0.9rem;font-weight:700;
+  border:none;transition:all .18s;
+}
+.plan-card:not(.featured) .plan-cta{background:var(--surface2);color:var(--charcoal);border:1px solid var(--border)}
+.plan-card:not(.featured) .plan-cta:hover{background:var(--surface3)}
+.plan-card.featured .plan-cta{background:var(--red-dark);color:white}
+.plan-card.featured .plan-cta:hover{background:#a02020;box-shadow:0 6px 20px rgba(139,26,26,0.4)}
+
+.plans-footnote{text-align:center;margin-top:36px;font-size:0.84rem;color:var(--text-dim)}
+.plans-footnote a{color:var(--red-dark);font-weight:600}
+.plans-footnote a:hover{text-decoration:underline}
+
+/* ══════ COMPARISON STRIP ══════ */
+.compare{padding:80px 0}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:18px;overflow:hidden}
+@media (max-width:780px){.compare-grid{grid-template-columns:1fr}}
+.compare-col{padding:36px 32px}
+.compare-col:first-child{background:var(--surface);border-right:1px solid var(--border)}
+.compare-col:last-child{background:var(--surface2)}
+@media (max-width:780px){.compare-col:first-child{border-right:none;border-bottom:1px solid var(--border)}}
+.compare-col h3{font-size:1.15rem;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.compare-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:0.86rem}
+.compare-row:last-child{border-bottom:none}
+.compare-row .lab{color:var(--text-muted)}
+.compare-row .val{font-weight:600;color:var(--charcoal)}
+
+/* ══════ FAQ ══════ */
+.faq{padding:80px 0;background:var(--surface2);border-top:1px solid var(--border)}
+.faq-list{max-width:740px;margin:0 auto;display:flex;flex-direction:column;gap:1px}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:18px 22px;cursor:pointer;user-select:none;
+}
+.faq-q span{font-size:0.95rem;font-weight:600;color:var(--charcoal)}
+.faq-plus{font-size:18px;color:var(--red-dark);transition:transform .25s;flex-shrink:0}
+.faq-item.open .faq-plus{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease, padding .3s ease}
+.faq-a-inner{padding:0 22px 18px;font-size:0.87rem;color:var(--text-muted);line-height:1.6}
+.faq-item.open .faq-a{max-height:240px}
+
+/* ══════ FOOTER CTA ══════ */
+.footer-cta{padding:100px 0;text-align:center}
+.footer-cta h2{font-size:clamp(1.9rem,4vw,2.8rem);font-weight:800;letter-spacing:-0.025em;max-width:680px;margin:0 auto 18px}
+.footer-cta p{font-size:1.02rem;color:var(--text-muted);max-width:480px;margin:0 auto 32px}
+.footer-cta .hero-ctas{justify-content:center}
+
+footer{border-top:1px solid var(--border);padding:40px 0;background:var(--surface)}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-tag{font-size:0.82rem;color:var(--text-dim)}
+.footer-links{display:flex;gap:22px}
+.footer-links a{font-size:0.82rem;color:var(--text-muted)}
+.footer-links a:hover{color:var(--red-dark)}
+
+/* ══════ MODALS ══════ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(26,22,20,0.62);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--surface);border-radius:20px;padding:36px 32px;
+  width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,0.22);
+  animation:modalPop .25s cubic-bezier(.34,1.3,.64,1) both;
+}
+@keyframes modalPop{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.modal-head h3{font-size:1.3rem;font-weight:800;letter-spacing:-0.02em}
+.modal-close{background:none;border:none;font-size:18px;color:var(--text-dim);cursor:pointer;padding:2px}
+.modal-close:hover{color:var(--text)}
+.modal-sub{font-size:0.86rem;color:var(--text-muted);margin-bottom:24px}
+.modal-tabs{display:flex;gap:6px;background:var(--surface2);padding:4px;border-radius:11px;margin-bottom:22px}
+.modal-tab{flex:1;padding:9px;border:none;background:none;border-radius:8px;font-size:0.84rem;font-weight:600;color:var(--text-muted);transition:all .15s}
+.modal-tab.active{background:var(--surface);color:var(--red-dark);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+.modal-field{margin-bottom:14px}
+.modal-field label{font-size:0.76rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px}
+.modal-field input{
+  width:100%;padding:11px 14px;border-radius:9px;border:1px solid var(--border);
+  background:var(--surface2);font-family:inherit;font-size:0.9rem;color:var(--text);outline:none;
+  transition:border-color .15s;
+}
+.modal-field input:focus{border-color:rgba(139,26,26,0.4);background:var(--surface)}
+.forgot-password{display:block;width:max-content;margin:-5px 0 12px auto;padding:0;border:0;background:none;color:var(--red-dark);font:inherit;font-size:.78rem;font-weight:650;cursor:pointer}
+.forgot-password:hover{text-decoration:underline}
+.modal-submit{width:100%;padding:13px;border-radius:10px;background:var(--red-dark);color:white;border:none;font-weight:700;font-size:0.92rem;margin-top:6px;transition:all .18s}
+.modal-submit:hover{background:#7a1515}
+.modal-divider{display:flex;align-items:center;gap:10px;margin:18px 0;font-size:0.74rem;color:var(--text-dim)}
+.modal-divider::before,.modal-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.modal-google{
+  width:100%;padding:11px;border-radius:9px;background:var(--surface);border:1px solid var(--border);
+  font-size:0.86rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:9px;
+  transition:all .15s;
+}
+.modal-google:hover{background:var(--surface2)}
+.google-auth-option{display:none!important}
+.modal-footer-text{text-align:center;font-size:0.8rem;color:var(--text-dim);margin-top:18px}
+.modal-footer-text a{color:var(--red-dark);font-weight:600}
+
+.demo-access{
+  margin-top:14px;padding:12px;border-radius:10px;
+  background:var(--surface2);border:1px dashed var(--border);
+}
+.demo-access-title{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
+.demo-access-role{font-size:0.84rem;font-weight:700;color:var(--charcoal);margin-bottom:4px}
+.demo-access-creds{font-size:0.78rem;color:var(--text-muted);line-height:1.5}
+.demo-fill-btn{
+  margin-top:10px;width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface);font-size:0.82rem;font-weight:600;color:var(--charcoal);transition:all .15s;
+}
+.demo-fill-btn:hover{background:var(--surface3)}
+
+.auth-shell{position:relative;display:flex;align-items:center;gap:10px}
+.auth-user-btn{
+  display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;
+  border:1px solid var(--border);background:var(--surface);color:var(--charcoal);
+  box-shadow:0 3px 10px rgba(0,0,0,0.04);transition:all .15s;
+}
+.auth-user-btn:hover{background:var(--surface2);transform:translateY(-1px)}
+.auth-user-avatar{
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#7a1212,#3a0808);color:white;font-weight:800;font-size:0.78rem;flex-shrink:0;
+}
+.auth-user-meta{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
+.auth-user-name{font-size:0.84rem;font-weight:700}
+.auth-user-role{font-size:0.7rem;color:var(--text-dim)}
+.auth-menu{
+  position:absolute;top:calc(100% + 10px);right:0;min-width:220px;padding:8px;
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 16px 40px rgba(0,0,0,0.14);
+  display:none;z-index:120;
+}
+.auth-shell.open .auth-menu{display:block}
+.auth-menu button{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border:none;background:transparent;border-radius:10px;font-size:0.86rem;color:var(--charcoal);text-align:left;
+}
+.auth-menu button:hover{background:var(--surface2)}
+.auth-menu .danger{color:var(--red-dark)}
+.auth-menu .divider{height:1px;background:var(--border);margin:6px 4px}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:400;
+  background:var(--charcoal-d);color:white;border-radius:11px;padding:13px 20px;
+  display:flex;align-items:center;gap:10px;font-size:0.86rem;font-weight:500;
+  transform:translateY(20px);opacity:0;transition:all .3s;box-shadow:0 8px 30px rgba(0,0,0,0.25);
+  max-width:340px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:600px){
+  .nav-inner{padding:14px 18px;gap:10px}
+  .nav-cta{gap:8px}
+  .nav-cta .btn{padding:9px 12px;font-size:0.78rem}
+  .logo{gap:7px}
+  .logo-icon{width:32px;height:32px}
+  .logo-text{font-size:0.96rem}
+  .plan-card.featured{transform:none}
+  .plan-card.featured:hover{transform:translateY(-3px)}
+  .hero{padding:60px 0 40px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ NAV ══════════ -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 60 60" width="20" height="20">
+          <path d="M4 50C4 50 10 39 16 36L23 33C26 32 30 29 36 28C39 27.5 42 28 45 29L51 31.5C54 33 58 38 58 43L58 50Z" fill="rgba(255,255,255,0.18)"/>
+          <path d="M18 36C19 30 24 27 29 27L40 27C45 27 48 31 49 36L44 37Z" fill="rgba(255,255,255,0.30)"/>
+          <circle cx="16" cy="50" r="7" fill="#1a0404" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+          <circle cx="44" cy="50" r="7" fill="#1a0404" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+          <rect x="17" y="6" width="26" height="18" rx="6" fill="white" opacity="0.95"/>
+          <polygon points="21,24 14,34 29,24" fill="white" opacity="0.95"/>
+          <circle cx="25" cy="15" r="3" fill="#8b1a1a"/>
+          <circle cx="30" cy="15" r="3" fill="#c04040" opacity="0.55"/>
+          <circle cx="35" cy="15" r="3" fill="#c04040" opacity="0.25"/>
+        </svg>
+      </div>
+      <div class="logo-text">Auto<span>Care</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="#usuarios">Para conductores</a>
+      <a href="#planes">Planes para talleres</a>
+      <a href="#faq">Preguntas frecuentes</a>
+    </div>
+    <div class="nav-cta" id="authShell"></div>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-tag"><div class="hero-tag-dot"></div> Disponible en Santo Domingo </div>
+    <h1>Diagnostica tu carro,<br>conecta con el <em>taller correcto</em>.</h1>
+    <p>AutoCare es la plataforma que conecta a dueños de vehículos con talleres mecánicos confiables en República Dominicana. Diagnóstico con IA, talleres verificados y citas en minutos — gratis para siempre.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-primary" onclick="openModal('user')">Crear cuenta gratis</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('planes').scrollIntoView({behavior:'smooth'})">Soy dueño de un taller →</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-val">100%</div><div class="hero-stat-lab">Gratis para conductores</div></div>
+      <div><div class="hero-stat-val">RD$0</div><div class="hero-stat-lab">Costo de registro</div></div>
+      <div><div class="hero-stat-val">&lt;2 min</div><div class="hero-stat-lab">Para agendar una cita</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ DOS CAMINOS ══════════ -->
+<section class="paths" id="usuarios">
+  <div class="wrap">
+    <div class="paths-grid">
+
+      <!-- USUARIO FINAL -->
+      <div class="path-card user reveal">
+        <div class="path-icon">🚗</div>
+        <h2>Para dueños de vehículos</h2>
+        <p class="path-desc">Encuentra talleres confiables, diagnostica problemas con IA y agenda tu cita sin llamar a nadie. Sin costo, sin letras pequeñas.</p>
+        <div class="path-price-tag">
+          <span class="amount">Gratis</span>
+          <span class="period">para siempre</span>
+        </div>
+        <div class="path-list">
+          <div class="path-list-item"><div class="path-check">✓</div> Diagnóstico con inteligencia artificial</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Busca y compara talleres cercanos</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Agenda citas en minutos</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Historial de citas, diagnósticos y mantenimientos</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Lee reseñas reales de otros conductores</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Consulta piezas compatibles y contacta al taller</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('user')">Crear mi cuenta gratis →</button>
+      </div>
+
+      <!-- TALLER -->
+      <div class="path-card shop reveal">
+        <div class="path-icon">🔧</div>
+        <h2>Para talleres mecánicos</h2>
+        <p class="path-desc">Gana visibilidad, gestiona tus citas y haz crecer tu taller con herramientas digitales. Planes desde RD$300 al mes.</p>
+        <div class="path-price-tag">
+          <span class="amount">RD$300</span>
+          <span class="period">/ mes desde</span>
+        </div>
+        <div class="path-list">
+          <div class="path-list-item"><div class="path-check">✓</div> Perfil visible para miles de conductores</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Recibe solicitudes de servicio</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Panel de gestión de citas y clientes</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Calendario, catálogo y respuesta a reseñas</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Estadísticas de tu desempeño</div>
+          <div class="path-list-item"><div class="path-check">✓</div> Publica piezas y recibe consultas</div>
+        </div>
+        <button class="btn btn-charcoal" onclick="document.getElementById('planes').scrollIntoView({behavior:'smooth'})" style="background:white;color:var(--charcoal-d)">Ver planes para talleres →</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PLANES TALLERES ══════════ -->
+<section class="plans-section" id="planes">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">Planes para talleres</div>
+      <h2>Digitaliza tu taller al precio justo</h2>
+      <p>Elige el plan según el tamaño de tu taller. Sin contratos largos, cancela cuando quieras.</p>
+    </div>
+
+    <div class="plans-grid">
+
+      <!-- BÁSICO -->
+      <div class="plan-card reveal">
+        <div class="plan-name">PARA EMPEZAR</div>
+        <div class="plan-card-title">Básico</div>
+        <div class="plan-price">
+          <span class="currency">RD$</span>
+          <span class="num">300</span>
+          <span class="per">/ mes</span>
+        </div>
+        <div class="plan-tagline">Ideal para talleres pequeños o en etapa inicial que buscan tener presencia digital.</div>
+        <div class="plan-features">
+          <div class="plan-feature"><div class="ck">✓</div> Registro y perfil básico del taller</div>
+          <div class="plan-feature"><div class="ck">✓</div> Aparición en búsquedas generales</div>
+          <div class="plan-feature"><div class="ck">✓</div> Recepción de solicitudes de servicio</div>
+          <div class="plan-feature"><div class="ck">✓</div> Estadísticas básicas de actividad</div>
+        </div>
+        <button class="plan-cta" onclick="selectPlan('Básico', 'RD$300/mes')">Empezar con Básico</button>
+      </div>
+
+      <!-- PROFESIONAL (destacado) -->
+      <div class="plan-card featured reveal">
+        <div class="plan-badge">Más elegido</div>
+        <div class="plan-name">PARA CRECER</div>
+        <div class="plan-card-title">Profesional</div>
+        <div class="plan-price">
+          <span class="currency">RD$</span>
+          <span class="num">600</span>
+          <span class="per">/ mes</span>
+        </div>
+        <div class="plan-tagline">Para talleres en crecimiento que quieren mejorar visibilidad y optimizar su gestión.</div>
+        <div class="plan-features">
+          <div class="plan-feature"><div class="ck">✓</div> Todo lo del plan Básico</div>
+          <div class="plan-feature"><div class="ck">✓</div> Mejor posicionamiento en resultados</div>
+          <div class="plan-feature"><div class="ck">✓</div> Perfil completo con galería de imágenes</div>
+          <div class="plan-feature"><div class="ck">✓</div> Gestión de citas desde la plataforma</div>
+          <div class="plan-feature"><div class="ck">✓</div> Notificaciones en tiempo real</div>
+          <div class="plan-feature"><div class="ck">✓</div> Estadísticas detalladas y soporte prioritario</div>
+        </div>
+        <button class="plan-cta" onclick="selectPlan('Profesional', 'RD$600/mes')">Empezar con Profesional</button>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="plan-card reveal">
+        <div class="plan-name">PARA DESTACAR</div>
+        <div class="plan-card-title">Premium</div>
+        <div class="plan-price">
+          <span class="currency">RD$</span>
+          <span class="num">900</span>
+          <span class="per">/ mes</span>
+        </div>
+        <div class="plan-tagline">Para talleres consolidados que buscan maximizar su alcance en el mercado.</div>
+        <div class="plan-features">
+          <div class="plan-feature"><div class="ck">✓</div> Todo lo del plan Profesional</div>
+          <div class="plan-feature"><div class="ck">✓</div> Posicionamiento destacado en la plataforma</div>
+          <div class="plan-feature"><div class="ck">✓</div> Distintivo Premium y mayor visibilidad</div>
+          <div class="plan-feature"><div class="ck">✓</div> Analíticas avanzadas con reportes</div>
+          <div class="plan-feature"><div class="ck">✓</div> Promociones, descuentos y recordatorios automáticos</div>
+          <div class="plan-feature"><div class="ck">✓</div> Soporte técnico personalizado</div>
+        </div>
+        <button class="plan-cta" onclick="selectPlan('Premium', 'RD$900/mes')">Empezar con Premium</button>
+      </div>
+
+    </div>
+
+    <div class="plans-footnote">¿Tienes varios talleres o necesitas algo a medida? <a href="#" onclick="showToast('💬','Conectando con ventas...')">Habla con nuestro equipo</a></div>
+  </div>
+</section>
+
+<!-- ══════════ COMPARACIÓN RÁPIDA ══════════ -->
+<section class="compare">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">En resumen</div>
+      <h2>Dos formas de usar AutoCare</h2>
+    </div>
+    <div class="compare-grid reveal">
+      <div class="compare-col">
+        <h3>🚗 Conductores</h3>
+        <div class="compare-row"><span class="lab">Costo</span><span class="val">Gratis para siempre</span></div>
+        <div class="compare-row"><span class="lab">Diagnóstico IA</span><span class="val">Incluido con uso responsable</span></div>
+        <div class="compare-row"><span class="lab">Búsqueda de talleres</span><span class="val">Ilimitado</span></div>
+        <div class="compare-row"><span class="lab">Agendamiento de citas</span><span class="val">Incluido</span></div>
+        <div class="compare-row"><span class="lab">Historial y recordatorios</span><span class="val">Incluido</span></div>
+        <div class="compare-row"><span class="lab">Catálogo de piezas</span><span class="val">Consulta y contacto</span></div>
+      </div>
+      <div class="compare-col">
+        <h3>🔧 Talleres</h3>
+        <div class="compare-row"><span class="lab">Costo</span><span class="val">Desde RD$300/mes</span></div>
+        <div class="compare-row"><span class="lab">Perfil en la plataforma</span><span class="val">Todos los planes</span></div>
+        <div class="compare-row"><span class="lab">Gestión de citas</span><span class="val">Desde plan Profesional</span></div>
+        <div class="compare-row"><span class="lab">Verificación documental</span><span class="val">Requerida para publicar</span></div>
+        <div class="compare-row"><span class="lab">Distintivo Premium</span><span class="val">Solo plan Premium</span></div>
+        <div class="compare-row"><span class="lab">Soporte</span><span class="val">Prioritario desde Profesional</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FAQ ══════════ -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">Preguntas frecuentes</div>
+      <h2>Lo que necesitas saber</h2>
+    </div>
+    <div class="faq-list reveal">
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>¿De verdad es gratis para los conductores?</span><span class="faq-plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Sí. Buscar talleres, usar la orientación con IA, agendar citas y consultar piezas no tiene costo para los dueños de vehículos. Los pagos por servicios o piezas se coordinan directamente con el taller durante el MVP.</div></div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>¿Puedo cambiar de plan más adelante si soy un taller?</span><span class="faq-plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Sí. Puedes subir o bajar de plan en cualquier momento desde tu panel de administración. El cambio aplica desde el siguiente ciclo de facturación.</div></div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>¿Hay algún contrato o permanencia mínima?</span><span class="faq-plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">No. Todos los planes son mensuales y puedes cancelar cuando quieras sin penalidades.</div></div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>¿Qué significa que un taller esté verificado?</span><span class="faq-plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Significa que AutoCare revisó la identidad y documentación básica del taller antes de publicarlo. La verificación es un requisito de confianza para todos; el plan Premium ofrece un distintivo promocional separado y mayor visibilidad.</div></div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>¿Cómo pagan los talleres su suscripción?</span><span class="faq-plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Próximamente vía tarjeta de crédito/débito directamente en la plataforma. Durante el lanzamiento, el equipo de AutoCare coordina el pago directamente con cada taller afiliado.</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER CTA ══════════ -->
+<section class="footer-cta">
+  <div class="wrap">
+    <h2 class="reveal">Tu próximo servicio automotriz empieza aquí.</h2>
+    <p class="reveal">Únete a AutoCare hoy — sin costo si eres conductor, con planes accesibles si tienes un taller.</p>
+    <div class="hero-ctas reveal">
+      <button class="btn btn-primary" onclick="openModal('user')">Crear cuenta gratis</button>
+      <button class="btn btn-ghost" onclick="openModal('shop')">Registrar mi taller</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-tag">© 2025 AutoCare · República Dominicana</div>
+    <div class="footer-links">
+      <a href="#" onclick="showToast('📄','Próximamente')">Términos</a>
+      <a href="#" onclick="showToast('🔒','Próximamente')">Privacidad</a>
+      <a href="#" onclick="showToast('✉️','hola@autocare.do')">Contacto</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════ MODAL LOGIN/REGISTRO ══════════ -->
+<div class="modal-overlay" id="overlay" onclick="handleOverlay(event)">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<div class="toast" id="toast">
+  <span id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+// ══════ MODAL LOGIC ══════
+const sessionRoutes = {
+  user: 'autocare-prototype.html?role=user&page=home',
+  shop: 'autocare-prototype.html?role=shop&page=panel&workshop=hyundaicare',
+  admin: 'autocare-prototype.html?role=admin&page=admin'
+};
+
+const demoAccounts = {
+  user: {
+    roleName: 'Usuario final',
+    email: 'cliente.demo@autocare.do',
+    password: 'DemoAutoCare123'
+  },
+  shop: {
+    roleName: 'Taller mecanico',
+    email: 'taller.demo@autocare.do',
+    password: 'DemoTaller123'
+  },
+  admin: {
+    roleName: 'Administrador',
+    email: 'admin.demo@autocare.do',
+    password: 'DemoAdmin123'
+  }
+};
+
+function renderDemoAccess(role) {
+  const account = demoAccounts[role];
+  if (!account) return '';
+  return `
+    <div class="demo-access">
+      <div class="demo-access-title">Acceso de prueba</div>
+      <div class="demo-access-role">${account.roleName}</div>
+      <div class="demo-access-creds">Correo: ${account.email}<br>Clave: ${account.password}</div>
+      <button class="demo-fill-btn" onclick="fillDemoCredentials('${role}')">Usar estas credenciales</button>
+    </div>
+  `;
+}
+
+function fillDemoCredentials(role) {
+  const account = demoAccounts[role];
+  if (!account) return;
+
+  const emailInput = document.getElementById('modalEmail');
+  const passInput = document.getElementById('modalPassword');
+
+  if (emailInput) emailInput.value = account.email;
+  if (passInput) passInput.value = account.password;
+
+  showToast('🧪', `Credenciales demo cargadas para ${account.roleName}`);
+}
+
+// ══════════════════════════════════════════
+// MFA — TOTP obligatorio para todos los roles
+// Simula integración con Google Authenticator / Authy
+// ══════════════════════════════════════════
+
+// TOTP demo: genera un código de 6 dígitos que cambia cada 30s
+// En producción esto sería verificado por el servidor contra el secreto TOTP del usuario
+function generateTOTPCode() {
+  const epoch   = Math.floor(Date.now() / 1000);
+  const counter = Math.floor(epoch / 30);
+  // Código determinista por ventana de 30s (demo visual)
+  const seed    = (counter * 1234567 + 9876543) % 1000000;
+  return seed.toString().padStart(6, '0');
+}
+
+function getTOTPSecondsLeft() {
+  return 30 - (Math.floor(Date.now() / 1000) % 30);
+}
+
+// Códigos TOTP fijos por rol para el prototipo (simula secreto configurado en el autenticador)
+const TOTP_DEMO = {
+  user:  '482917',
+  shop:  '763041',
+  admin: '195284'
+};
+
+function startSession(role) {
+  const account   = demoAccounts[role];
+  const targetUrl = sessionRoutes[role];
+  if (!account || !targetUrl) return;
+
+  try {
+    // Evita que una cuenta anterior determine la pantalla del nuevo acceso.
+    sessionStorage.removeItem('autocareRole');
+    sessionStorage.removeItem('autocareEmail');
+    sessionStorage.setItem('autocareTarget', targetUrl);
+  } catch (e) {}
+
+  // MFA siempre obligatorio — verificar si el usuario ya configuró el autenticador
+  const mfaConfigured = localStorage.getItem(`mfaConfigured_${role}`);
+  if (mfaConfigured) {
+    openTOTPVerify(role, targetUrl);
+  } else {
+    openTOTPSetup(role, targetUrl);
+  }
+}
+
+// ── PASO 1: Configurar autenticador (primera vez) ──
+function openTOTPSetup(role, targetUrl) {
+  const account = demoAccounts[role];
+  const secret  = 'JBSWY3DPEHPK3PXP'; // Demo TOTP secret (base32)
+  const issuer  = 'AutoCare';
+  const label   = encodeURIComponent(`${issuer}:${account.email}`);
+  const otpauth = `otpauth://totp/${label}?secret=${secret}&issuer=${issuer}&algorithm=SHA1&digits=6&period=30`;
+
+  // QR code via QRServer API (no external tracking, pure QR generation)
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(otpauth)}`;
+
+  const box = document.getElementById('modalBox');
+  box.innerHTML = `
+    <div class="modal-head">
+      <h3>Configurar autenticador</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:18px">
+      AutoCare requiere verificación en dos pasos para todos los usuarios.
+      Escanea el código QR con tu app autenticadora.
+    </div>
+
+    <!-- App badges -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.78rem;font-weight:600">
+        <span style="font-size:16px">🔑</span> Google Authenticator
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.78rem;font-weight:600">
+        <span style="font-size:16px">🛡️</span> Authy
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.78rem;font-weight:600">
+        <span style="font-size:16px">🔒</span> Microsoft Authenticator
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px">
+      <div style="flex-shrink:0">
+        <img src="${qrUrl}" alt="QR Code TOTP" style="width:140px;height:140px;border-radius:10px;border:1px solid var(--border);display:block">
+        <div style="font-size:0.72rem;color:var(--text-dim);text-align:center;margin-top:6px">Escanea con tu app</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:10px">O ingresa la clave manualmente:</div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.9rem;font-weight:700;letter-spacing:0.12em;font-family:monospace;color:var(--text)">
+          ${secret.match(/.{1,4}/g).join(' ')}
+        </div>
+        <div style="margin-top:12px;font-size:0.82rem;color:var(--text-muted)">
+          <div style="margin-bottom:4px">1. Abre tu app autenticadora</div>
+          <div style="margin-bottom:4px">2. Toca "Agregar cuenta" o el ícono +</div>
+          <div style="margin-bottom:4px">3. Escanea el QR o ingresa la clave</div>
+          <div>4. Ingresa el código de 6 dígitos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Demo code hint -->
+    <div style="background:rgba(139,26,26,0.06);border:1px solid rgba(139,26,26,0.18);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.83rem">
+      <strong style="color:#8b1a1a">Modo demo:</strong>
+      <span style="color:var(--text-muted)"> Usa el código </span>
+      <strong style="font-family:monospace;font-size:1rem;color:#8b1a1a;letter-spacing:0.1em" id="demoTOTPCode">${TOTP_DEMO[Object.keys(sessionRoutes).find(r => sessionRoutes[r] === targetUrl) || 'user']}</strong>
+      <span style="color:var(--text-dim);font-size:0.78rem;margin-left:8px">· caduca en <span id="totpCountdown">30</span>s</span>
+    </div>
+
+    <button class="modal-submit" onclick="localStorage.setItem('mfaConfigured_${role}', '1'); openTOTPVerify('${role}', '${targetUrl}')">
+      Ya configuré mi autenticador →
+    </button>`;
+
+  // Countdown timer
+  startTOTPCountdown();
+}
+
+// ── PASO 2: Verificar código TOTP ──
+function openTOTPVerify(role, targetUrl) {
+  const demoCode = TOTP_DEMO[role] || '000000';
+  const box = document.getElementById('modalBox');
+  box.innerHTML = `
+    <div class="modal-head">
+      <h3>Verificación en dos pasos</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:60px;height:60px;border-radius:50%;background:rgba(139,26,26,0.08);border:2px solid rgba(139,26,26,0.18);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px">🔐</div>
+      <div style="font-size:0.9rem;font-weight:600;margin-bottom:4px">Abre tu app autenticadora</div>
+      <div style="font-size:0.83rem;color:var(--text-muted)">Ingresa el código de 6 dígitos de<br><strong>Google Authenticator / Authy</strong></div>
+    </div>
+
+    <!-- Demo hint -->
+    <div style="background:rgba(139,26,26,0.06);border:1px solid rgba(139,26,26,0.15);border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:0.82rem;color:var(--text-muted)">
+        🔑 Código demo:
+        <strong style="font-family:monospace;font-size:1rem;color:#8b1a1a;letter-spacing:0.1em;margin-left:4px" id="demoTOTPCode">${demoCode}</strong>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-dim)">caduca en <span id="totpCountdown">30</span>s</div>
+    </div>
+
+    <!-- 6-digit input -->
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px" id="mfaInputs">
+      ${Array(6).fill(0).map((_,i) => `
+        <input id="lmfa${i}" type="text" maxlength="1" inputmode="numeric"
+          style="width:44px;height:54px;text-align:center;font-size:1.5rem;font-weight:700;border:2px solid var(--border);border-radius:10px;background:var(--surface2);color:var(--text);font-family:monospace;outline:none;transition:all .15s"
+          oninput="lmfaNext(this,${i},'${role}','${targetUrl}')"
+          onkeydown="lmfaBack(event,${i})"
+          onfocus="this.style.borderColor='#8b1a1a';this.style.background='var(--surface)'"
+          onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface2)'">`
+      ).join('')}
+    </div>
+
+    <button class="modal-submit" onclick="verifyTOTP('${role}','${targetUrl}')">Verificar e ingresar</button>
+
+    <div style="text-align:center;margin-top:14px;font-size:0.8rem;color:var(--text-dim)">
+      ¿Problemas con el autenticador?
+      <span style="color:#8b1a1a;cursor:pointer" onclick="localStorage.removeItem('mfaConfigured_${role}');openTOTPSetup('${role}','${targetUrl}')">Reconfigurar</span>
+    </div>`;
+
+  setTimeout(() => document.getElementById('lmfa0')?.focus(), 100);
+  startTOTPCountdown();
+}
+
+function lmfaNext(el, i, role, targetUrl) {
+  el.value = el.value.replace(/\D/g,'');
+  if (el.value && i < 5) document.getElementById('lmfa'+(i+1))?.focus();
+  if (i === 5 && el.value) verifyTOTP(role, targetUrl);
+}
+
+function lmfaBack(e, i) {
+  if (e.key === 'Backspace' && !e.target.value && i > 0) document.getElementById('lmfa'+(i-1))?.focus();
+}
+
+function verifyTOTP(role, targetUrl) {
+  const entered  = Array(6).fill(0).map((_,i) => document.getElementById('lmfa'+i)?.value || '').join('');
+  const expected = TOTP_DEMO[role] || '000000';
+
+  if (entered === expected) {
+    // La sesión se activa únicamente después de superar el MFA.
+    const account = demoAccounts[role];
+    try {
+      sessionStorage.setItem('autocareRole', role);
+      sessionStorage.setItem('autocareEmail', account?.email || '');
+      sessionStorage.removeItem('autocareTarget');
+    } catch (error) {}
+    const submitBtn = document.querySelector('.modal-submit');
+    if (submitBtn) {
+      submitBtn.textContent = '✓ Verificado — Ingresando...';
+      submitBtn.style.background = '#166534';
+    }
+    setTimeout(() => { window.location.href = targetUrl; }, 600);
+  } else {
+    // Error shake
+    const inputs = document.querySelectorAll('#mfaInputs input');
+    inputs.forEach(inp => {
+      inp.style.borderColor = '#dc2626';
+      inp.style.background  = '#fff0f0';
+    });
+    showToast('❌', 'Código incorrecto. Revisa tu autenticador.');
+    setTimeout(() => {
+      inputs.forEach(inp => {
+        inp.style.borderColor = 'var(--border)';
+        inp.style.background  = 'var(--surface2)';
+        inp.value = '';
+      });
+      document.getElementById('lmfa0')?.focus();
+    }, 1400);
+  }
+}
+
+let _totpTimer = null;
+function startTOTPCountdown() {
+  clearInterval(_totpTimer);
+  function tick() {
+    const s   = getTOTPSecondsLeft();
+    const el  = document.getElementById('totpCountdown');
+    const cEl = document.getElementById('demoTOTPCode');
+    if (!el) { clearInterval(_totpTimer); return; }
+    el.textContent = s;
+    if (s <= 5 && el) el.style.color = '#dc2626';
+    else if (el) el.style.color = 'var(--text-dim)';
+  }
+  tick();
+  _totpTimer = setInterval(tick, 1000);
+}
+
+function getSessionRole() {
+  try {
+    const role = sessionStorage.getItem('autocareRole');
+    return demoAccounts[role] ? role : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function logoutSession() {
+  try {
+    sessionStorage.removeItem('autocareRole');
+    sessionStorage.removeItem('autocareEmail');
+  } catch (error) {
+    // Ignore storage errors.
+  }
+  window.location.href = 'autocare-landing.html';
+}
+
+function goToAccountModule(page) {
+  const role = getSessionRole() || 'user';
+  const route = `autocare-prototype.html?role=${role}&page=${page}`;
+  window.location.href = route;
+}
+
+function toggleAuthMenu(event) {
+  event.stopPropagation();
+  document.getElementById('authShell')?.classList.toggle('open');
+}
+
+function escapeAuthText(value) {
+  return String(value || '').replace(/[&<>'"]/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;'
+  })[character]);
+}
+
+function renderAuthShell() {
+  const shell = document.getElementById('authShell');
+  if (!shell) return;
+
+  const role = getSessionRole();
+  if (!role) {
+    shell.className = 'nav-cta';
+    shell.innerHTML = `
+      <button class="btn btn-ghost" onclick="openModal('user')">Iniciar sesión</button>
+      <button class="btn btn-primary" onclick="openModal('shop')">Soy un taller</button>
+      <!-- Acceso administrativo conservado para una futura activación. -->
+      <button class="btn btn-ghost" onclick="openModal('admin')" disabled hidden aria-hidden="true" tabindex="-1">Admin</button>
+    `;
+    return;
+  }
+
+  const account = demoAccounts[role];
+  const sessionName = sessionStorage.getItem('autocareName')?.trim();
+  const sessionEmail = sessionStorage.getItem('autocareEmail')?.trim();
+  const displayName = sessionName || account.roleName;
+  const displayEmail = sessionEmail || account.email;
+  const avatar = displayName.charAt(0).toUpperCase();
+  shell.className = 'auth-shell';
+  shell.innerHTML = `
+    <button class="auth-user-btn" onclick="toggleAuthMenu(event)">
+      <span class="auth-user-avatar">${escapeAuthText(avatar)}</span>
+      <span class="auth-user-meta">
+        <span class="auth-user-name">${escapeAuthText(displayName)}</span>
+        <span class="auth-user-role">${escapeAuthText(displayEmail)}</span>
+      </span>
+      <span style="font-size:0.72rem;color:var(--text-dim)">▾</span>
+    </button>
+    <div class="auth-menu">
+      <button onclick="goToAccountModule('profile')">Perfil <span>›</span></button>
+      <button onclick="goToAccountModule('settings')">Configuraciones <span>›</span></button>
+      <button onclick="goToAccountModule('terms')">Términos y condiciones <span>›</span></button>
+      <div class="divider"></div>
+      <button class="danger" onclick="logoutSession()">Cerrar sesión <span>⎋</span></button>
+    </div>
+  `;
+}
+
+function userModalHTML(tab) {
+  const isLogin = tab === 'login';
+  return `
+    <div class="modal-head">
+      <h3>${isLogin ? 'Inicia sesión' : 'Crea tu cuenta'}</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-sub">${isLogin ? 'Bienvenido de nuevo a AutoCare' : 'Es gratis y toma menos de un minuto'}</div>
+    <div class="modal-tabs">
+      <button class="modal-tab ${isLogin?'active':''}" onclick="openModal('user','login')">Iniciar sesión</button>
+      <button class="modal-tab ${!isLogin?'active':''}" onclick="openModal('user','register')">Registrarme</button>
+    </div>
+    <div class="google-auth-option" aria-hidden="true">
+    <button class="modal-google" onclick="showToast('🔐','Conectando con Google...')">
+      <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continuar con Google
+    </button>
+    <div class="modal-divider">o con tu correo</div>
+    </div>
+    ${!isLogin ? `
+    <div class="modal-field">
+      <label>Nombre completo</label>
+      <input id="modalName" type="text" placeholder="Tu nombre">
+    </div>` : ''}
+    <div class="modal-field">
+      <label>Correo electrónico</label>
+      <input id="modalEmail" type="email" placeholder="tucorreo@email.com">
+    </div>
+    <div class="modal-field">
+      <label>Contraseña</label>
+      <input id="modalPassword" type="password" placeholder="••••••••">
+    </div>
+    ${isLogin ? `<button class="forgot-password" onclick="showPasswordRecovery('user')">¿Olvidaste tu contraseña?</button>` : ''}
+    <button class="modal-submit" onclick="${isLogin ? "startSession('user')" : "registerSession('user')"}">${isLogin ? 'Iniciar sesión' : 'Crear cuenta gratis'}</button>
+    <div class="modal-footer-text">
+      ${isLogin ? '¿No tienes cuenta? ' : '¿Ya tienes cuenta? '}
+      <a onclick="openModal('user','${isLogin?'register':'login'}')">${isLogin ? 'Regístrate gratis' : 'Inicia sesión'}</a>
+    </div>
+  `;
+}
+
+function shopModalHTML(tab) {
+  const isLogin = tab === 'login';
+  return `
+    <div class="modal-head">
+      <h3>${isLogin ? 'Panel del taller' : 'Registra tu taller'}</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-sub">${isLogin ? 'Accede a tu panel de administración' : 'Empieza con el plan que prefieras'}</div>
+    <div class="modal-tabs">
+      <button class="modal-tab ${isLogin?'active':''}" onclick="openModal('shop','login')">Iniciar sesión</button>
+      <button class="modal-tab ${!isLogin?'active':''}" onclick="openModal('shop','register')">Registrar taller</button>
+    </div>
+    ${!isLogin ? `
+    <div class="modal-field">
+      <label>Nombre del taller</label>
+      <input id="modalName" type="text" placeholder="Ej: AutoPro Service Center">
+    </div>` : ''}
+    <div class="modal-field">
+      <label>Correo electrónico</label>
+      <input id="modalEmail" type="email" placeholder="taller@email.com">
+    </div>
+    <div class="modal-field">
+      <label>Contraseña</label>
+      <input id="modalPassword" type="password" placeholder="••••••••">
+    </div>
+    ${isLogin ? `<button class="forgot-password" onclick="showPasswordRecovery('shop')">¿Olvidaste tu contraseña?</button>` : ''}
+    <button class="modal-submit" onclick="${isLogin ? "startSession('shop')" : "registerSession('shop')"}">${isLogin ? 'Entrar al panel' : 'Continuar con el registro'}</button>
+    <div class="modal-footer-text">
+      ${isLogin ? '¿Aún no tienes taller registrado? ' : '¿Ya tienes una cuenta? '}
+      <a onclick="openModal('shop','${isLogin?'register':'login'}')">${isLogin ? 'Regístralo aquí' : 'Inicia sesión'}</a>
+    </div>
+  `;
+}
+
+function adminModalHTML() {
+  return `
+    <div class="modal-head">
+      <h3>Administrador de plataforma</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-sub">Acceso interno para gestionar talleres, usuarios y contenido.</div>
+    <div class="modal-field">
+      <label>Correo electrónico</label>
+      <input id="modalEmail" type="email" placeholder="admin@autocare.do">
+    </div>
+    <div class="modal-field">
+      <label>Contraseña</label>
+      <input id="modalPassword" type="password" placeholder="••••••••">
+    </div>
+    <button class="modal-submit" onclick="startSession('admin')">Entrar como administrador</button>
+  `;
+}
+
+function openModal(type, tab) {
+  tab = tab || 'login';
+  const box = document.getElementById('modalBox');
+  if (type === 'user') {
+    box.innerHTML = userModalHTML(tab);
+  } else if (type === 'shop') {
+    box.innerHTML = shopModalHTML(tab);
+  } else {
+    box.innerHTML = adminModalHTML();
+  }
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
+function handleOverlay(e){ if(e.target.id==='overlay') closeModal(); }
+
+function selectPlan(name, price) {
+  openModal('shop','register');
+  setTimeout(()=>{
+    const sub = document.querySelector('.modal-sub');
+    if (sub) sub.textContent = `Plan ${name} — ${price}. Completa tus datos para continuar.`;
+  }, 10);
+}
+
+// ══════ FAQ ══════
+function toggleFaq(item){
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+
+// ══════ TOAST ══════
+let toastTimer;
+function showToast(icon,msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastIcon').textContent=icon;
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ══════ SCROLL REVEAL ══════
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+document.addEventListener('click', (event) => {
+  const shell = document.getElementById('authShell');
+  if (shell && shell.classList.contains('open') && !shell.contains(event.target)) {
+    shell.classList.remove('open');
+  }
+});
+
+renderAuthShell();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@23.0.0"></script>
+<script src="autocare-auth.js?v=20260827-2"></script>
+</body>
+</html>
